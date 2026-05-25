@@ -1,55 +1,106 @@
 # UI Foundry Divider Component Generator
 
-Standalone visual divider generator built with Next.js.
+Standalone visual Divider generator built with Next.js, React, and TypeScript.
 
-This app is a focused divider-building studio for section dividers, labeled separators, ornamental rules, and richer visual breaks that can be edited visually and exported as code.
+Separator and content-divider studio for horizontal/vertical rules, decorative separators, labelled dividers, inset rhythm, and accessibility mode.
+
+This project is packaged as an independent component studio for marketplace sale while following the same UI Foundry product language used by the button generator. It keeps local shared controls, local presets, local export utilities, and no runtime dependency on another component app.
 
 ## Product summary
 
 This generator is designed for:
+- designers building editorial and dashboard layouts
+- developers creating section and list separators
+- buyers who need polished divider variants without rebuilding CSS
 
-- designers building editorial layouts, dashboards, landing pages, and content sections
-- developers who want editable divider starting points instead of hand-tuning separator CSS
-- freelancers and agencies who need decorative or branded separators for client UI
-- buyers who want a dedicated divider tool with code export
+The intended workflow is:
+
+1. choose a preset or start from the default state
+2. edit the component through sectioned controls
+3. inspect the live preview in the shared dark studio canvas
+4. switch to code view when needed
+5. copy or download the generated React output
 
 ## What the product includes
 
-- section-based editing controls
+- standalone Next.js app structure
+- section-based editor shell
+- local shared controls for color, typography, inputs, sliders, switches, sections, and preview/download panels
 - live preview panel
 - code view with copy support
-- file export support
-- searchable preset library
-- generated premium preset catalog with filters, paging, and surprise-me apply
-- undo and redo controls
-- self-contained standalone app structure
+- React-only export path
+- download filename control
+- preview background controls
+- preset application flow with full-state updates
+- accessibility and state-preview guidance where native to the component
+- self-contained package files for independent repo publishing
 
-## Editing coverage
+## Native editing surface
 
-The editor currently includes these control areas:
+The editor is focused on controls that are native to Divider and useful in real product work:
+- horizontal and vertical orientation with length, inset, thickness, and alignment controls
+- line style, opacity, color, gradient, decorative, and editorial treatments
+- content label, chip, icon, and text-alignment systems
+- semantic separator role versus decorative presentation mode
+- React-only export with preview-matched code
 
-- Presets
-- Basics
-- Sizing
-- Colors
-- Content
-- Typography
-- Effects
-- Accessibility
+The goal is maximum useful depth without adding unrelated controls that would make the component stop reading as Divider.
 
-These sections cover separator orientation and style, sizing and color systems, labeled or icon content, divider typography, animation and glow effects, and accessibility metadata.
+## Preset model
+
+Presets are treated as full editor states, not just color swaps. The suite-wide preset contract is:
+
+- family
+- archetype
+- variant
+- size
+- tags
+- state
+
+Applying a preset should update the complete editable state and reset transient preview state so the preview and export stay aligned.
 
 ## Export workflow
 
-The divider preview and code output are connected to the same current state so the exported result follows the design shown in the studio.
+The shipped export contract is React-only. The live preview, visible code, copied code, and downloaded file are expected to come from the same current React payload so users do not see one result and export another.
 
-## Why this product is useful
+## Consistency contract
 
-The app is useful for much more than a plain horizontal rule. It supports labeled and styled separators that help structure product, editorial, and marketing layouts.
+This studio is intentionally structured to be both independently sellable and merge-ready for a future UI Foundry SaaS product:
 
-## Tech
+- no runtime imports from button-component
+- no runtime imports from shared-templates
+- no runtime imports from another component studio
+- common editing tasks use the same local control patterns as the button canon
+- shared state names such as previewResetKey, previewBgMode, previewBgInput, and downloadName are preserved where applicable
+
+## Tech stack
 
 - Next.js
 - React
 - TypeScript
+- Tailwind CSS
+- local component/editor utilities
 
+## Commands
+
+    npm install
+    npm run typecheck
+    npm run lint -- --quiet
+    npm run build
+    npm run dev
+
+## Verification checklist
+
+Before publishing a new version, verify:
+
+- install completes without dependency errors
+- typecheck passes
+- lint has no blocking errors
+- production build completes
+- preview and generated React code match
+- copied code and downloaded code match the visible code
+- no generated node_modules, .next, or build artifacts are committed
+
+## Repository
+
+This repo is intended to publish as Abid-Al-Hossain/UI_divider.
