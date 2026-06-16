@@ -54,7 +54,18 @@ export default function LivePreview({ state }: { state: DividerState }) {
     letterSpacing,
     opacity,
     interactiveResize,
+    ariaRole,
+    ariaLabel,
+    focusRingEnabled,
+    focusRingWidth,
+    focusRingOffset,
+    focusRingColor,
+    disabled,
+    disabledOpacity,
+    marginTop,
+    marginBottom,
   } = state;
+  const [isFocused, setIsFocused] = React.useState(false);
 
   const isHorizontal = orientation === "horizontal";
 
@@ -78,14 +89,19 @@ export default function LivePreview({ state }: { state: DividerState }) {
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
-    opacity: opacity,
+    opacity: disabled ? disabledOpacity : opacity,
     gap: `${gap}px`, // Apply gap if label is present? Actually gap usually applies between items.
+    marginTop: `${marginTop}px`,
+    marginBottom: `${marginBottom}px`,
     resize: interactiveResize
       ? isHorizontal
         ? "horizontal"
         : "vertical"
       : "none",
     overflow: interactiveResize ? "auto" : "visible",
+    pointerEvents: disabled ? "none" : undefined,
+    outline: isFocused && focusRingEnabled ? `${focusRingWidth}px solid ${focusRingColor}` : undefined,
+    outlineOffset: isFocused && focusRingEnabled ? focusRingOffset : undefined,
   };
 
   const labelOrder =
@@ -126,7 +142,15 @@ export default function LivePreview({ state }: { state: DividerState }) {
 
   return (
     <div className="overflow-hidden" style={containerStyle}>
-      <div style={wrapperStyle}>
+      <div
+        role={ariaRole === "none" ? undefined : ariaRole}
+        aria-label={ariaRole === "none" ? undefined : ariaLabel || undefined}
+        aria-disabled={disabled || undefined}
+        tabIndex={focusRingEnabled && !disabled ? 0 : undefined}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        style={wrapperStyle}
+      >
         <DividerLine {...state} />
 
         {labelNode}

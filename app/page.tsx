@@ -28,6 +28,7 @@ import DividerTypographySection from "./_section/DividerTypographySection";
 import DividerEffectsSection from "./_section/DividerEffectsSection";
 import DividerMotionSection from "./_section/DividerMotionSection";
 import DividerAccessibilitySection from "./_section/DividerAccessibilitySection";
+import DividerStatesSection from "./_section/DividerStatesSection";
 import { buildDividerExportPayload } from "./_utils/exportUtils";
 
 import {
@@ -103,6 +104,7 @@ export default function DividerPage() {
     { id: "effects", label: "Effects", component: DividerEffectsSection },
     { id: "motion", label: "Motion", component: DividerMotionSection },
     { id: "accessibility", label: "Accessibility", component: DividerAccessibilitySection },
+    { id: "states", label: "States", component: DividerStatesSection },
   ];
 
   // Generic Setter Helper

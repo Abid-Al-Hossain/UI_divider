@@ -43,6 +43,26 @@ export type DividerExportInput = {
   interactiveResize: boolean;
   ariaRole: "separator" | "presentation" | "none";
   ariaLabel: string;
+  gradientAngle: number;
+  shadowEnabled: boolean;
+  shadowX: number;
+  shadowY: number;
+  shadowBlur: number;
+  shadowSpread: number;
+  shadowColor: string;
+  shadowOpacity: number;
+  focusRingEnabled: boolean;
+  focusRingWidth: number;
+  focusRingOffset: number;
+  focusRingColor: string;
+  transitionDuration: number;
+  transitionEasing: "ease" | "ease-in" | "ease-out" | "ease-in-out" | "linear";
+  disabled: boolean;
+  disabledOpacity: number;
+  hoverColor: string;
+  hoverOpacity: number;
+  marginTop: number;
+  marginBottom: number;
 };
 
 export function buildDividerExportPayload(params: DividerExportInput) {
@@ -83,6 +103,26 @@ export function buildDividerExportPayload(params: DividerExportInput) {
     interactiveResize,
     ariaRole,
     ariaLabel,
+    gradientAngle,
+    shadowEnabled,
+    shadowX,
+    shadowY,
+    shadowBlur,
+    shadowSpread,
+    shadowColor,
+    shadowOpacity,
+    focusRingEnabled,
+    focusRingWidth,
+    focusRingOffset,
+    focusRingColor,
+    transitionDuration,
+    transitionEasing,
+    disabled,
+    disabledOpacity,
+    hoverColor,
+    hoverOpacity,
+    marginTop,
+    marginBottom,
   } = params;
 
   const isHorizontal = orientation === "horizontal";
@@ -98,7 +138,7 @@ export function buildDividerExportPayload(params: DividerExportInput) {
 
   const getLineFill = () =>
     gradientEnabled
-      ? `linear-gradient(${isHorizontal ? "to right" : "to bottom"}, ${gradientStart}, ${gradientEnd})`
+      ? `linear-gradient(${gradientAngle}deg, ${gradientStart}, ${gradientEnd})`
       : color;
 
   const getDoubleBackground = () =>
@@ -143,46 +183,66 @@ export function buildDividerExportPayload(params: DividerExportInput) {
     if (variant === "solid" || gradientEnabled || variant === "double") {
       return "";
     }
-    if (isHorizontal) {
-      return `border-top: ${thickness}px ${variant} ${color}; height: 0;`;
-    }
-    return `border-left: ${thickness}px ${variant} ${color}; width: 0;`;
+    const side = isHorizontal ? "borderTop" : "borderLeft";
+    const crossAxis = isHorizontal ? "height" : "width";
+    return `${side}: \`${thickness}px ${variant} \` + lineColor, ${crossAxis}: 0,`;
   };
 
-  const shadow = neonGlow
+  const glowShadow = neonGlow
     ? `0 0 ${glowBlur}px ${glowColor}, 0 0 ${glowBlur * 2}px ${glowColor}`
-    : "none";
+    : "";
+  const dropShadowHex = Math.round(shadowOpacity * 255).toString(16).padStart(2, "0");
+  const dropShadow = shadowEnabled
+    ? `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowSpread}px ${shadowColor}${dropShadowHex}`
+    : "";
+  const shadow = [dropShadow, glowShadow].filter(Boolean).join(", ") || "none";
   const roleProp =
     ariaRole === "none" ? "" : `\n      role="${ariaRole}"`;
   const ariaLabelProp =
     ariaRole === "separator" && ariaLabel.trim()
       ? `\n      aria-label="${ariaLabel.trim()}"`
       : "";
+  const interactive = !disabled && (hoverColor !== color || hoverOpacity !== 1);
 
   const content = `import React from 'react';
 ${reactIconImport}
 
 export default function Divider() {
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
+  const interactive = ${interactive};
+  const lineColor = ${disabled} ? '${color}' : (interactive && isHovered ? '${hoverColor}' : '${color}');
+  const lineOpacity = ${disabled} ? ${disabledOpacity} : (interactive && isHovered ? ${hoverOpacity} : 1);
   const lineStyle = {
     flex: 1,
     position: 'relative',
     borderRadius: ${borderRadius},
     overflow: 'hidden',
+    opacity: lineOpacity,
+    transition: ${transitionDuration} > 0 ? 'opacity ${transitionDuration}ms ${transitionEasing}, background-color ${transitionDuration}ms ${transitionEasing}' : undefined,
     ${
       variant === "solid" || gradientEnabled || variant === "double"
-        ? `background: '${bg}', width: '100%', height: '100%'`
+        ? `background: ${gradientEnabled || variant === "double" ? `'${bg}'` : "lineColor"}, width: '100%', height: '100%'`
         : getBorderInfo()
-            .replace(/;/g, ",")
-            .replace(/:/g, ": ")
-            .replace(/-([a-z])/g, (m) => m[1].toUpperCase())
     }
   };
 
   return (
-    <div${roleProp}${ariaLabelProp} style={{
+    <div${roleProp}${ariaLabelProp}
+      aria-disabled={${disabled} || undefined}
+      tabIndex={${focusRingEnabled} && !${disabled} ? 0 : undefined}
+      onMouseEnter={() => interactive && setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      style={{
       display: 'flex', flexDirection: '${isHorizontal ? "row" : "column"}', alignItems: 'center', justifyContent: 'center',
-      width: '${getSizeStyle().width}', height: '${getSizeStyle().height}', margin: '${gap}px', opacity: ${opacity},
+      width: '${getSizeStyle().width}', height: '${getSizeStyle().height}', margin: '${gap}px', marginTop: ${marginTop}, marginBottom: ${marginBottom},
+      opacity: ${disabled} ? ${disabledOpacity} : ${opacity},
       boxShadow: '${shadow}', position: 'relative',
+      pointerEvents: ${disabled} ? 'none' : undefined,
+      outline: isFocused && ${focusRingEnabled} ? '${focusRingWidth}px solid ${focusRingColor}' : undefined,
+      outlineOffset: isFocused && ${focusRingEnabled} ? ${focusRingOffset} : undefined,
       resize: '${interactiveResize ? (isHorizontal ? "horizontal" : "vertical") : "none"}', overflow: '${interactiveResize ? "auto" : "visible"}'
     }}>
       ${showLabel && labelPosition === "left" ? reactLabelMarkup : ""}
