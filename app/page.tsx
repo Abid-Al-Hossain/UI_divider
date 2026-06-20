@@ -1,6 +1,7 @@
 "use client";
 
 import React, {
+import ContrastGuard from "@/components/shared/color/ContrastGuard";
   useState,
   useRef,
   useMemo,
@@ -187,7 +188,6 @@ export default function DividerPage() {
       code={exportCode.content}
     />
   );
-
   return (
     <AppShell contentOverflow="hidden">
       <PlaygroundLayout
@@ -196,6 +196,7 @@ export default function DividerPage() {
         controls={controls}
         preview={preview}
       />
-    </AppShell>
+
+<ContrastGuard /></AppShell>
   );
 }
