@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SectionCard, LabeledField, Segmented } from "@/components/shared/layout/ui";
+import { SectionCard, LabeledField, FilterSelect } from "@/components/shared/layout/ui";
 import { DividerLine } from "./DividerLine";
 import { DIVIDER_PRESETS, DIVIDER_PRESET_COUNT, type DividerPreset } from "../_data/dividerPresets";
 import type { DividerState } from "../types";
@@ -117,7 +117,7 @@ export default function PresetsSection({ state, applyPreset }: Props) {
           </LabeledField>
 
           <LabeledField label="Orientation">
-            <Segmented
+            <FilterSelect
               value={orientationFilter}
               onChange={(value) => {
                 setOrientationFilter(value);
@@ -134,7 +134,7 @@ export default function PresetsSection({ state, applyPreset }: Props) {
 
         <div className="grid gap-3 md:grid-cols-3">
           <LabeledField label="Variant">
-            <Segmented
+            <FilterSelect
               value={variantFilter}
               onChange={(value) => {
                 setVariantFilter(value);
